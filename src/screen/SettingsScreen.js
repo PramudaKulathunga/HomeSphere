@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -7,124 +8,223 @@ import {
   TouchableOpacity,
   ImageBackground,
   ScrollView,
-  Switch
+  Switch,
+  Platform
 } from 'react-native';
-import React, { useState } from 'react';
-import { db, ref, update } from "../Components/firebase";
-
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Globles from '../Components/Globles';
-const backGroundImg = require("../images/BackImg.png")
+import { db, ref, onValue, update } from "../Components/firebase";
+
+const backGroundImg = require("../images/BackImg.png");
 
 const SettingsScreen = ({ navigation }) => {
+  const [isDarkMode, setIsDarkMode] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const [darkMode, setDarkMode] = useState(1);
-  const [isOn, setIsOn] = useState(true);
-
-  {/*Update data to firebase*/ }
-  const updateData = (name) => {
+  // Fetch current dark mode setting from Firebase
+  useEffect(() => {
     const data = ref(db);
-    update(data, { DarkMode: name })
+    const unsubscribe = onValue(data, (snapshot) => {
+      const currentMode = snapshot.val().DarkMode;
+      setIsDarkMode(currentMode === 0);
+      setIsLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Update dark mode setting in Firebase
+  const updateDarkMode = (isDark) => {
+    const modeValue = isDark ? 0 : 1;
+    update(ref(db), { DarkMode: modeValue });
   };
 
-  const darkToggle = () => {
-    if (isOn) {
-      setDarkMode(0)
-    } else {
-      setDarkMode(1)
-    }
-    setIsOn(isOn => !isOn)
+  const handleToggle = () => {
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+    updateDarkMode(newMode);
+  };
 
-    updateData(darkMode)
-    Globles.tempDark = darkMode
-    Globles.tumb = (darkMode == 0)
+  // Theme variables
+  const backgroundColor = isDarkMode ? 'rgba(0, 0, 0, 0.69)' : 'rgba(255, 255, 255, 0.85)';
+  const headerBgColor = isDarkMode ? 'rgb(91, 33, 182)' : 'rgb(147, 51, 234)';
+  const textColor = !isDarkMode ? 'black' : '#fff';
+  const iconColor = !isDarkMode ? '#fff' : '#fff';
+
+
+  if (isLoading) {
+    return (
+      <SafeAreaView style={[styles.container, { backgroundColor: backgroundColor }]}>
+        <StatusBar backgroundColor={headerBgColor} barStyle={"light-content"} />
+        <View style={styles.loadingContainer}>
+          <Ionicons name="settings" size={40} color={iconColor} />
+          <Text style={[styles.loadingText, { color: textColor }]}>Loading Settings...</Text>
+        </View>
+      </SafeAreaView>
+    );
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor="lightblue" barStyle="default" />
-      <ImageBackground source={backGroundImg} style={{ flex: 1, resizeMode: 'cover', justifyContent: 'center' }} >
+      <StatusBar backgroundColor={headerBgColor} barStyle={"light-content"} />
 
-        <View style={styles.header}>
-          <View style={styles.titleHeader}>
-            <Ionicons name="settings" color={'black'} size={30} style={styles.mainIcon} />
-            <Text style={styles.mainText}>Settings</Text>
+      <ImageBackground
+        source={backGroundImg}
+        style={styles.backgroundImage}
+        blurRadius={isDarkMode ? 3 : 1}
+      >
+        {/* Header */}
+        <View style={[styles.header, { backgroundColor: headerBgColor }]}>
+          <View style={styles.headerContent}>
+            <Ionicons
+              name="settings"
+              color={iconColor}
+              size={24}
+              style={styles.headerIcon}
+            />
+            <Text style={[styles.headerTitle, { color: iconColor }]}>
+              SETTINGS
+            </Text>
           </View>
 
-          <View style={styles.homeHeader}>
-            <TouchableOpacity
-              style={{ flexDirection: 'row' }}
-              onPress={() => navigation.goBack('HomeScreen')}
-            >
-              <Ionicons name="chevron-back-outline" color={'black'} size={20} style={styles.arrowIcon} />
-              <Text style={[styles.mainText, styles.homeText]}>HOME</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+            activeOpacity={0.7}
+          >
+            <Ionicons
+              name="chevron-back"
+              color={iconColor}
+              size={20}
+            />
+            <Text style={[styles.backText, { color: iconColor }]}>
+              HOME
+            </Text>
+          </TouchableOpacity>
         </View>
 
-        <ScrollView style={[styles.content, { backgroundColor: (Globles.tempDark == 0) ? 'black' : 'white' }]}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 }}>
-            <Text style={[styles.title, { color: (Globles.tempDark == 1) ? 'black' : 'white' }]}>Dark mode</Text>
-            <Switch style={{ transform: [{ scaleX: 1.5 }, { scaleY: 1.3 }], marginRight: '7%' }} trackColor={{ false: 'rgb(151,189,253)', true: 'lightgreen' }} value={Globles.tumb} onValueChange={darkToggle} />
+        {/* Content */}
+        <ScrollView
+          style={[styles.content, { backgroundColor }]}
+          contentContainerStyle={styles.scrollContent}
+        >
+          {/* Dark Mode Toggle */}
+          <View style={styles.settingItem}>
+            <View style={styles.settingTextContainer}>
+              <Ionicons
+                name={isDarkMode ? "moon" : "sunny"}
+                size={24}
+                color={textColor}
+                style={styles.settingIcon}
+              />
+              <Text style={[styles.settingTitle, { color: textColor }]}>
+                Dark Mode
+              </Text>
+            </View>
+            <Switch
+              value={isDarkMode}
+              onValueChange={handleToggle}
+              trackColor={{ false: '#767577', true: '#81b0ff' }}
+              thumbColor={isDarkMode ? '#f5dd4b' : '#f4f3f4'}
+              ios_backgroundColor="#3e3e3e"
+              style={styles.switch}
+            />
           </View>
+
+          {/* Additional settings can be added here */}
+          {/* Example:
+          <View style={styles.settingItem}>
+            <Text style={[styles.settingTitle, { color: textColor }]}>
+              Notification Settings
+            </Text>
+            <Ionicons name="chevron-forward" size={20} color={textColor} />
+          </View>
+          */}
         </ScrollView>
       </ImageBackground>
-    </SafeAreaView >
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  statusbar: {
-    backgroundColor: 'lightblue',
-    barStyle: 'default',
-  },
   container: {
     flex: 1,
   },
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 18,
+    fontWeight: '500',
+  },
   header: {
-    height: 50,
-    backgroundColor: 'rgb(151,189,253)',
+    height: 60,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 35,
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
-  titleHeader: {
+  headerContent: {
     flexDirection: 'row',
-    marginLeft: 15
+    alignItems: 'center',
   },
-  homeHeader: {
-    marginRight: 13
+  headerIcon: {
+    marginRight: 12,
   },
-  mainIcon: {
-    marginTop: 10,
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '600',
   },
-  mainText: {
-    marginTop: 8,
-    marginLeft: 15,
-    fontWeight: 'bold',
-    fontSize: 25,
-    color: 'black'
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  homeText: {
-    fontSize: 18,
-    marginTop: 13,
-    marginLeft: 5,
-  },
-  arrowIcon: {
-    marginTop: 16,
+  backText: {
+    fontSize: 16,
+    fontWeight: '500',
+    marginLeft: 4,
   },
   content: {
     flex: 1,
-    height: '100%',
-    width: '100%',
-    marginTop: 5,
-    opacity: 0.7
   },
-  title: {
-    marginLeft: '5%',
-    fontSize: 25,
-    fontWeight: 'bold',
+  scrollContent: {
+    paddingHorizontal: 16,
+    paddingBottom: 24,
+  },
+  settingItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(74,144,226,0.2)',
+  },
+  settingTextContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  settingIcon: {
+    marginRight: 16,
+  },
+  settingTitle: {
+    fontSize: 18,
+    fontWeight: '500',
+  },
+  switch: {
+    transform: [{ scaleX: 1.1 }, { scaleY: 1.1 }],
   },
 });
 
-export default SettingsScreen
+export default SettingsScreen;

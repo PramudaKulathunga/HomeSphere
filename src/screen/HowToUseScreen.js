@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -6,119 +7,188 @@ import {
   StatusBar,
   TouchableOpacity,
   ScrollView,
-  ImageBackground
+  ImageBackground,
+  Platform
 } from 'react-native';
-import React from 'react';
-import Globles from '../Components/Globles';
-
 import Ionicons from 'react-native-vector-icons/Ionicons';
-const backGroundImg = require("../images/BackImg.png")
+import { db, ref, onValue } from "../Components/firebase";
+
+const backGroundImg = require("../images/BackImg.png");
+
+// Instruction data
+const instructions = [
+  {
+    title: "Step 01:",
+    description: "Make sure your power connection for ESP32 board is properly set up to start the home circuit based on Arduino."
+  },
+  {
+    title: "Step 02:",
+    description: "Check the WiFi connection for ESP32 board to establish communication between the app and circuit."
+  },
+  {
+    title: "Step 03:",
+    description: "You can connect up to 5 ports and monitor data including voltage usage, current usage, power, frequency, and RMS values."
+  },
+  {
+    title: "Rename Ports",
+    description: "Customize your port names as needed for better organization."
+  },
+  {
+    title: "Plug Switch Buttons",
+    description: "Toggle each of the 5 ports by double-pressing the floating buttons. Manual circuit changes will be reflected in the app."
+  },
+  {
+    title: "Analysis",
+    description: "Utilize the analysis feature to review and understand your power consumption data."
+  }
+];
 
 const HowToUseScreen = ({ navigation }) => {
+  const [isDarkMode, setIsDarkMode] = useState(1);
+  const backgroundColor = !isDarkMode ? 'rgba(0,0,0,0.69)' : 'rgba(255, 255, 255, 0.85)';
+  const headerBgColor = !isDarkMode ? 'rgb(91, 33, 182)' : 'rgb(147, 51, 234)';
+  const textColor = isDarkMode ? 'black' : '#fff';
+  const iconColor = !isDarkMode ? '#fff' : '#fff';
+  const memberContainer = !isDarkMode ? 'rgb(107, 64, 176)' : 'rgba(217, 182, 255, 0.66)';
+
+
+  useEffect(() => {
+    const data = ref(db);
+    onValue(data, (snapshot) => {
+      const val = snapshot.val();
+      setIsDarkMode(val.DarkMode);
+    });
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor="lightblue" barStyle="default" />
-      <ImageBackground source={backGroundImg} style={{ flex: 1, resizeMode: 'cover', justifyContent: 'center' }} >
+      <StatusBar backgroundColor={headerBgColor} barStyle={"light-content"} />
 
-        <View style={styles.header}>
-          <View style={styles.titleHeader}>
-            <Ionicons name="chatbubbles-sharp" color={'black'} size={30} style={styles.mainIcon} />
-            <Text style={styles.mainText}>HOW TO USE</Text>
+      <ImageBackground
+        source={backGroundImg}
+        style={styles.backgroundImage}
+        blurRadius={isDarkMode ? 3 : 1}
+      >
+        {/* Header */}
+        <View style={[styles.header, { backgroundColor: headerBgColor }]}>
+          <View style={styles.headerContent}>
+            <Ionicons
+              name="help-circle"
+              color={iconColor}
+              size={24}
+              style={styles.headerIcon}
+            />
+            <Text style={[styles.headerTitle, { color: iconColor }]}>
+              HOW TO USE
+            </Text>
           </View>
 
-          <View style={styles.homeHeader}>
-            <TouchableOpacity
-              style={{ flexDirection: 'row' }}
-              onPress={() => navigation.goBack('HomeScreen')}
-            >
-              <Ionicons name="chevron-back-outline" color={'black'} size={20} style={styles.arrowIcon} />
-              <Text style={[styles.mainText, styles.homeText]}>HOME</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+            activeOpacity={0.7}
+          >
+            <Ionicons
+              name="chevron-back"
+              color={iconColor}
+              size={20}
+            />
+            <Text style={[styles.backText, { color: iconColor }]}>
+              HOME
+            </Text>
+          </TouchableOpacity>
         </View>
 
-        <ScrollView style={[styles.content, { backgroundColor: (Globles.tempDark == 0) ? 'black' : 'white' }]}>
-          <Text style={[styles.title, { color: (Globles.tempDark == 1) ? 'black' : 'white' }]}>Step 01:</Text>
-          <Text style={[styles.subTitle, { color: (Globles.tempDark == 1) ? 'black' : 'white' }]}>Make sure your power connection for Esp32 board to start the home circuit base on Arduino.</Text>
-          <Text style={[styles.title, { color: (Globles.tempDark == 1) ? 'black' : 'white' }]}>Step 02:</Text>
-          <Text style={[styles.subTitle, { color: (Globles.tempDark == 1) ? 'black' : 'white' }]}>Next check the wifi connection for Esp32 board to connect between app and circuit.</Text>
-          <Text style={[styles.title, { color: (Globles.tempDark == 1) ? 'black' : 'white' }]}>Step 03:</Text>
-          <Text style={[styles.subTitle, { color: (Globles.tempDark == 1) ? 'black' : 'white' }]}>You can connect maximum 5 ports and after you are able to see data about ports such as voltage use, current use, power, frequency and rms value.</Text>
-          <Text style={[styles.title, { color: (Globles.tempDark == 1) ? 'black' : 'white' }]}>Rename</Text>
-          <Text style={[styles.subTitle, { color: (Globles.tempDark == 1) ? 'black' : 'white' }]}>You can rename user ports as you wish.</Text>
-          <Text style={[styles.title, { color: (Globles.tempDark == 1) ? 'black' : 'white' }]}>Plug switch buttons</Text>
-          <Text style={[styles.subTitle, { color: (Globles.tempDark == 1) ? 'black' : 'white' }]}>You can on or off each 5 ports by doubble pressing floating tabs. If you manually turn on or off each ports by circuit it will display here.</Text>
-          <Text style={[styles.title, { color: (Globles.tempDark == 1) ? 'black' : 'white' }]}>Analysis</Text>
-          <Text style={[styles.subTitle, { color: (Globles.tempDark == 1) ? 'black' : 'white' }]}>Here, you have facility to analyze your data what are you used.</Text>
-          <View style={{ height: 40 }} />
+        {/* Content */}
+        <ScrollView
+          style={[styles.content, { backgroundColor }]}
+          contentContainerStyle={styles.scrollContent}
+        >
+          {instructions.map((item, index) => (
+            <View key={index} style={[styles.instructionCard, { backgroundColor: memberContainer }]}>
+              <Text style={[styles.instructionTitle, { color: textColor }]}>
+                {item.title}
+              </Text>
+              <Text style={[styles.instructionText, { color: textColor }]}>
+                {item.description}
+              </Text>
+            </View>
+          ))}
+
+          <View style={styles.bottomSpacer} />
         </ScrollView>
       </ImageBackground>
     </SafeAreaView>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
-  statusbar: {
-    backgroundColor: 'lightblue',
-    barStyle: 'default',
-  },
   container: {
     flex: 1,
   },
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover',
+  },
   header: {
-    height: 50,
-    backgroundColor: 'rgb(151,189,253)',
+    height: 60,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 35,
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
-  titleHeader: {
+  headerContent: {
     flexDirection: 'row',
-    marginLeft: 15
+    alignItems: 'center',
   },
-  homeHeader: {
-    marginRight: 13
+  headerIcon: {
+    marginRight: 12,
   },
-  mainIcon: {
-    marginTop: 10,
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '600',
   },
-  mainText: {
-    marginTop: 8,
-    marginLeft: 15,
-    fontWeight: 'bold',
-    fontSize: 25,
-    color: 'black'
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  homeText: {
-    fontSize: 18,
-    marginTop: 13,
-    marginLeft: 5,
-  },
-  arrowIcon: {
-    marginTop: 16,
+  backText: {
+    fontSize: 16,
+    fontWeight: '500',
+    marginLeft: 4,
   },
   content: {
     flex: 1,
-    height: '100%',
-    width: '100%',
-    backgroundColor: 'white',
-    marginTop: 5,
-    opacity: 0.7
   },
-  title: {
-    marginLeft: '5%',
-    marginTop: 15,
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'black'
+  scrollContent: {
+    paddingHorizontal: 16,
+    paddingBottom: 24,
   },
-  subTitle: {
-    marginLeft: '5%',
-    marginRight: '5%',
-    marginTop: 10,
+  instructionCard: {
+    backgroundColor: 'rgba(74, 145, 226, 0.26)',
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 16,
+    marginTop: 16,
+  },
+  instructionTitle: {
     fontSize: 18,
-    color: 'black'
-  }
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  instructionText: {
+    fontSize: 16,
+    lineHeight: 24,
+  },
+  bottomSpacer: {
+    height: 40,
+  },
 });
 
-export default HowToUseScreen
+export default HowToUseScreen;

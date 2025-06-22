@@ -58,16 +58,6 @@ const OnboardingScreen = ({ navigation }) => {
     const slidesRef = useRef(null);
     const timerRef = useRef(null);
 
-    // Auto-sliding effect
-    useEffect(() => {
-        timerRef.current = setInterval(() => {
-            const nextIndex = (currentSlideIndex + 1) % slides.length;
-            goToSlide(nextIndex);
-        }, 3000); // Change slide every 3 seconds
-
-        return () => clearInterval(timerRef.current);
-    }, [currentSlideIndex]);
-
     const goToSlide = (index) => {
         slidesRef.current?.scrollToOffset({ offset: index * width });
         setCurrentSlideIndex(index);
@@ -172,12 +162,6 @@ const OnboardingScreen = ({ navigation }) => {
                     const contentOffsetX = e.nativeEvent.contentOffset.x;
                     const index = Math.round(contentOffsetX / width);
                     setCurrentSlideIndex(index);
-                    // Reset timer when user manually swipes
-                    clearInterval(timerRef.current);
-                    timerRef.current = setInterval(() => {
-                        const nextIndex = (index + 1) % slides.length;
-                        goToSlide(nextIndex);
-                    }, 3000);
                 }}
                 keyExtractor={(item) => item.id}
                 getItemLayout={(_, index) => ({

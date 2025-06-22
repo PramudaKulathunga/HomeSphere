@@ -1,7 +1,5 @@
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, onValue, update } from "firebase/database";
-import "firebase/database";
-import firebase from "firebase/compat/app";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDRnlQOxkzD2jV9NdGxHNV0uBPTmYyQq4I",
@@ -14,9 +12,7 @@ const firebaseConfig = {
   measurementId: "G-3JCXHRSTT9"
 };
 
-if(firebase.apps.length === 0){
-  firebase.initializeApp(firebaseConfig)
-}
-const db = getDatabase();
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
 export { db, ref, onValue, update }; 

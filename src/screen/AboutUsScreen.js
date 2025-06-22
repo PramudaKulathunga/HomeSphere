@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -8,69 +9,132 @@ import {
   ScrollView,
   ImageBackground,
   Linking,
-  Image
+  Image,
+  Platform
 } from 'react-native';
-import React, { useState } from 'react';
-import Globles from '../Components/Globles';
-
 import Ionicons from 'react-native-vector-icons/Ionicons';
-const backGroundImg = require("../images/BackImg.png")
-const logo = require("../images/logo.png")
+import { db, ref, onValue } from "../Components/firebase";
+
+// Assets
+const backGroundImg = require("../images/BackImg.png");
+const logo = require("../images/logo.png");
+
+// Team data
+const teamMembers = [
+  {
+    name: 'K.M.P.S.Kulathunga - Bsc.Eng (UG)',
+    role: 'App Developer',
+    linkedin: 'https://www.linkedin.com/in/pramuda-kulathunga-8a04561ba'
+  },
+  {
+    name: 'H.M.S.A.Bandara - Bsc.Eng (UG)',
+    linkedin: 'https://www.linkedin.com/in/sasindu-amesh-35ba0b297'
+  },
+  {
+    name: 'H.M.D.S.Darmadasa - Bsc.Eng (UG)',
+    linkedin: 'https://www.linkedin.com/in/dulara-srimantha-3ab464246'
+  }
+];
 
 const AboutUsScreen = ({ navigation }) => {
+  const [isDarkMode, setIsDarkMode] = useState(1);
+  const backgroundColor = !isDarkMode ? 'rgba(0,0,0,0.69)' : 'rgba(255, 255, 255, 0.85)';
+  const headerBgColor = !isDarkMode ? 'rgb(91, 33, 182)' : 'rgb(147, 51, 234)';
+  const textColor = isDarkMode ? 'black' : '#fff';
+  const iconColor = !isDarkMode ? '#fff' : '#fff';
+  const memberContainer = !isDarkMode ? 'rgb(107, 64, 176)' : 'rgba(217, 182, 255, 0.66)';
+  const linkText = !isDarkMode ? '#C4B5FD' : '#9333EA';
+  const logoText = !isDarkMode ? '#C4B5FD' : '#9333EA';
+
+  useEffect(() => {
+    const data = ref(db);
+    onValue(data, (snapshot) => {
+      const val = snapshot.val();
+      setIsDarkMode(val.DarkMode);
+    });
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor="lightblue" barStyle="default" />
-      <ImageBackground source={backGroundImg} style={{ flex: 1, resizeMode: 'cover', justifyContent: 'center' }} >
-        <View style={styles.header}>
-          <View style={styles.titleHeader}>
-            <Ionicons name="people-sharp" color={'black'} size={30} style={styles.mainIcon} />
-            <Text style={styles.mainText}>ABOUT US</Text>
+      <StatusBar
+        backgroundColor={headerBgColor}
+        barStyle={"light-content"}
+      />
+
+      <ImageBackground
+        source={backGroundImg}
+        style={styles.backgroundImage}
+        blurRadius={isDarkMode ? 0 : 2}
+      >
+        {/* Header */}
+        <View style={[styles.header, { backgroundColor: headerBgColor }]}>
+          <View style={styles.headerContent}>
+            <Ionicons
+              name="information-circle"
+              color={iconColor}
+              size={24}
+              style={styles.headerIcon}
+            />
+            <Text style={[styles.headerTitle, { color: iconColor }]}>
+              ABOUT US
+            </Text>
           </View>
 
-          <View style={styles.homeHeader}>
-            <TouchableOpacity
-              style={{ flexDirection: 'row' }}
-              onPress={() => navigation.goBack('HomeScreen')}
-            >
-              <Ionicons name="chevron-back-outline" color={'black'} size={20} style={styles.arrowIcon} />
-              <Text style={[styles.mainText, styles.homeText]}>HOME</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+            activeOpacity={0.7}
+          >
+            <Ionicons
+              name="chevron-back"
+              color={iconColor}
+              size={20}
+            />
+            <Text style={[styles.backText, { color: iconColor }]}>
+              HOME
+            </Text>
+          </TouchableOpacity>
         </View>
 
-        <ScrollView style={[styles.content, { backgroundColor: (Globles.tempDark == 0) ? 'black' : 'white' }]}>
-          <Text style={[styles.title, { color: (Globles.tempDark == 1) ? 'black' : 'white' }]}>ELECROAM Team Details:</Text>
-          <Text style={[styles.subTitle, { color: (Globles.tempDark == 1) ? 'black' : 'white' }]}>K.M.P.S.Kulathunga - Bsc.Eng (UG)</Text>
-          <Text style={[styles.subTitle, { color: 'blue' }]}
-            onPress={() => Linking.openURL('https://www.linkedin.com/in/pramuda-kulathunga-8a04561ba')}>
-            See more details
+        {/* Content */}
+        <ScrollView
+          style={[styles.content, { backgroundColor }]}
+          contentContainerStyle={styles.scrollContent}
+        >
+          <Text style={[styles.sectionTitle, { color: textColor }]}>
+            ELECROAM Team Details:
           </Text>
-          <Text style={[styles.subTitle, { color: (Globles.tempDark == 1) ? 'black' : 'white' }]}>H.M.S.A.Bandara - Bsc.Eng (UG)</Text>
-          <Text style={[styles.subTitle, { color: 'blue' }]}
-            onPress={() => Linking.openURL('https://www.linkedin.com/in/sasindu-amesh-35ba0b297')}>
-            See more details
-          </Text>
-          <Text style={[styles.subTitle, { color: (Globles.tempDark == 1) ? 'black' : 'white' }]}>H.M.D.S.Darmadasa - Bsc.Eng (UG)</Text>
-          <Text style={[styles.subTitle, { color: 'blue' }]}
-            onPress={() => Linking.openURL('https://www.linkedin.com/in/dulara-srimantha-3ab464246')}>
-            See more details
-          </Text>
-          <Text style={[styles.title, { color: (Globles.tempDark == 1) ? 'black' : 'white' }]}>App Developer:</Text>
-          <Text style={[styles.subTitle, { color: (Globles.tempDark == 1) ? 'black' : 'white' }]}>K.M.P.S.Kulathunga - Bsc.Eng (UG)</Text>
-          <Text style={[styles.subTitle, { color: 'blue' }]}
-            onPress={() => Linking.openURL('https://www.linkedin.com/in/pramuda-kulathunga-8a04561ba')}>
-            See more details
-          </Text>
-          <View style={styles.logoContent}>
+
+          {teamMembers.map((member, index) => (
+            <View key={index} style={[styles.memberContainer, { backgroundColor: memberContainer }]}>
+              <Text style={[styles.memberName, { color: textColor }]}>
+                {member.name}
+              </Text>
+              {member.role && (
+                <Text style={[styles.memberRole, { color: textColor }]}>
+                  ({member.role})
+                </Text>
+              )}
+              <TouchableOpacity
+                onPress={() => Linking.openURL(member.linkedin)}
+                activeOpacity={0.6}
+              >
+                <Text style={[styles.linkText, { color: linkText }]}>View LinkedIn Profile</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+
+          {/* App Version */}
+          <View style={styles.logoContainer}>
             <Image
               source={logo}
-              style={{ width: 120, height: 120 }}
+              style={styles.logo}
+              resizeMode="contain"
             />
-            <Text style={{ fontWeight: 'bold', color: 'black', color: (Globles.tempDark == 1) ? 'black' : 'white' }}>VERSION 1.0.0</Text>
+            <Text style={[styles.versionText, { color: logoText }]}>
+              VERSION 1.0.1
+            </Text>
           </View>
-          <View style={{ height: 40 }} />
         </ScrollView>
       </ImageBackground>
     </SafeAreaView>
@@ -78,74 +142,97 @@ const AboutUsScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  statusbar: {
-    backgroundColor: 'lightblue',
-    barStyle: 'default',
-  },
   container: {
     flex: 1,
-    marginTop:35,
+  },
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover',
   },
   header: {
-    height: 50,
-    backgroundColor: 'rgb(151,189,253)',
+    height: 60,
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
-  titleHeader: {
+  headerContent: {
     flexDirection: 'row',
-    marginLeft: 15
+    alignItems: 'center',
   },
-  homeHeader: {
-    marginRight: 13
+  headerIcon: {
+    marginRight: 12,
   },
-  mainIcon: {
-    marginTop: 10,
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '600',
   },
-  mainText: {
-    marginTop: 8,
-    marginLeft: 15,
-    fontWeight: 'bold',
-    fontSize: 25,
-    color: 'black'
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  homeText: {
-    fontSize: 18,
-    marginTop: 13,
-    marginLeft: 5,
-  },
-  arrowIcon: {
-    marginTop: 16,
+  backText: {
+    fontSize: 16,
+    fontWeight: '500',
+    marginLeft: 4,
   },
   content: {
-    marginTop: 5,
     flex: 1,
-    height: '100%',
-    width: '100%',
-    backgroundColor: 'white',
-    opacity: 0.7
   },
-  title: {
-    marginLeft: '5%',
-    marginTop: 15,
-    marginBottom: 2,
+  scrollContent: {
+    paddingBottom: 24,
+  },
+  sectionTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: 'black'
+    fontWeight: '600',
+    marginTop: 24,
+    marginBottom: 16,
+    marginHorizontal: 16,
   },
-  subTitle: {
-    marginLeft: '10%',
-    marginRight: '5%',
-    marginTop: 3,
-    fontSize: 18,
-    color: 'black'
+  memberContainer: {
+    marginBottom: 20,
+    marginHorizontal: 16,
+    padding: 16,
+    borderRadius: 8,
+    backgroundColor: 'rgba(74, 145, 226, 0.26)',
   },
-  logoContent: {
-    width: '100%',
-    height: 200,
-    justifyContent: 'center',
-    alignItems: 'center'
-  }
+  memberName: {
+    fontSize: 16,
+    fontWeight: '500',
+    marginBottom: 4,
+  },
+  memberRole: {
+    fontSize: 14,
+    fontWeight: '400',
+    marginBottom: 8,
+    fontStyle: 'italic',
+  },
+  linkText: {
+    color: '#4a90e2',
+    fontSize: 14,
+    fontWeight: '500',
+    textDecorationLine: 'underline',
+  },
+  logoContainer: {
+    alignItems: 'center',
+    marginTop: 32,
+    marginBottom: 24,
+  },
+  logo: {
+    width: 120,
+    height: 120,
+    marginBottom: 16,
+  },
+  versionText: {
+    fontSize: 14,
+    fontWeight: '500',
+  },
 });
 
-export default AboutUsScreen
+export default AboutUsScreen;
