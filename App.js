@@ -1,14 +1,13 @@
 /* eslint-disable prettier/prettier */
 import 'react-native-gesture-handler';
 import React, { useEffect, useState } from 'react';
-import { View, Alert, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Alert, Text, TouchableOpacity, StyleSheet, NativeModules, BackHandler } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { db, ref, update, onValue } from "./src/Components/firebase";
 import NetInfo from '@react-native-community/netinfo';
-import Restart from 'react-native-restart';
 import { Ionicons } from '@expo/vector-icons';
 import { listenToAllPorts } from './src/Components/storage';
 
@@ -168,7 +167,8 @@ const App = () => {
     const unsubscribe = NetInfo.addEventListener(state => {
       if (!state.isConnected) {
         Alert.alert('No Internet!', 'Please check your network status', [
-          { text: 'Reload App', onPress: () => Restart.restart() },
+          { text: 'Reload App', onPress: () => NativeModules.DevSettings.reload() },
+          { text: 'OK', onPress: () => BackHandler.exitApp(), style: 'cancel' }
         ]);
       }
     });
