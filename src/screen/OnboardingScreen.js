@@ -13,7 +13,7 @@ import {
 } from "react-native";
 
 const { width, height } = Dimensions.get('window');
-const COLORS = { white: '#fff', primary: 'rgb(0,125,254)' };
+const COLORS = { white: '#fff', primary: 'rgb(91, 33, 182)' };
 
 const slides = [
     {
@@ -118,7 +118,7 @@ const OnboardingScreen = ({ navigation }) => {
                     {currentSlideIndex === slides.length - 1 ? (
                         <TouchableOpacity
                             style={[styles.button, styles.getStartedButton]}
-                            onPress={() => navigation.replace('HomeScreen')}
+                            onPress={() => navigation.replace('MainTabs')}
                         >
                             <Text style={styles.buttonText}>GET STARTED</Text>
                         </TouchableOpacity>
@@ -155,7 +155,7 @@ const OnboardingScreen = ({ navigation }) => {
                 showsHorizontalScrollIndicator={false}
                 bounces={false}
                 onScroll={Animated.event(
-                    [{ nativeEvent: { contentOffset: { x: scrollX } }}],
+                    [{ nativeEvent: { contentOffset: { x: scrollX } } }],
                     { useNativeDriver: false }
                 )}
                 onMomentumScrollEnd={(e) => {
@@ -197,14 +197,14 @@ const styles = StyleSheet.create({
         paddingHorizontal: 40,
     },
     title: {
-        color: 'black',
+        color: 'rgb(91, 33, 182)',
         fontWeight: 'bold',
         fontSize: 22,
         marginBottom: 10,
         textAlign: 'center',
     },
     subtitle: {
-        color: 'gray',
+        color: 'rgb(166, 127, 230)',
         fontSize: 14,
         textAlign: 'center',
         lineHeight: 23,
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     },
     indicator: {
         height: 2.5,
-        backgroundColor: 'black',
+        backgroundColor: 'rgb(91, 33, 182)',
         marginHorizontal: 3,
         borderRadius: 2,
     },
@@ -242,6 +242,7 @@ const styles = StyleSheet.create({
     buttonText: {
         fontWeight: 'bold',
         fontSize: 15,
+        color: COLORS.white,
     },
     skipButton: {
         flex: 1,

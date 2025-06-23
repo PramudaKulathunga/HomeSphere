@@ -222,12 +222,10 @@ const styles = StyleSheet.create({
   logoContainer: {
     alignItems: 'center',
     marginTop: 32,
-    marginBottom: 24,
   },
   logo: {
     width: 120,
     height: 120,
-    marginBottom: 16,
   },
   versionText: {
     fontSize: 14,

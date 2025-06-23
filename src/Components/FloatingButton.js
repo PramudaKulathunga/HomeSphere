@@ -53,7 +53,7 @@ const FloatingButton = ({ switches, portNames, onSwitchToggle, darkMode }) => {
     };
 
     // Color scheme based on dark mode
-    const activeColor = !darkMode ? 'rgb(176, 115, 250)' : 'rgb(46, 23, 79)';
+    const activeColor = !darkMode ? 'rgb(119, 8, 255)' : 'rgb(46, 23, 79)';
     const inactiveColor = !darkMode ? 'rgba(199, 167, 239, 0.8)' : 'rgba(98, 0, 238, 0.5)';
     const mainButtonColor = !darkMode ? 'rgb(253, 253, 253)' : 'rgb(98, 0, 238)';
     const textColor = darkMode ? '#fff' : '#000';
