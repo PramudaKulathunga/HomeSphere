@@ -10,6 +10,7 @@ import { db, ref, update, onValue } from "./src/Components/firebase";
 import NetInfo from '@react-native-community/netinfo';
 import { Ionicons } from '@expo/vector-icons';
 import { listenToAllPorts } from './src/Components/storage';
+import SplashScreen from './src/Components/SplashScreen';
 
 import OnboardingScreen from './src/screen/OnboardingScreen';
 import HomeScreen from './src/screen/HomeScreen';
@@ -138,7 +139,16 @@ const MainTabs = () => {
 
 const App = () => {
   const [isAppFirstLaunched, setIsAppFirstLaunch] = React.useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+  
   useEffect(() => {
     const interval = setInterval(() => {
       listenToAllPorts();
@@ -177,6 +187,10 @@ const App = () => {
   }, []);
 
   const MainTabsWrapper = (props) => <MainTabs {...props} />;
+
+  if (isLoading || isAppFirstLaunched === null) {
+    return <SplashScreen />;
+  }
 
   return (
     isAppFirstLaunched != null && (

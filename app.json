@@ -1,16 +1,17 @@
 {
   "expo": {
     "name": "HomeSphere",
-    "slug": "HomeSphere",
-    "version": "1.0.1",
+    "slug": "HomeSphereNew",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/transparent.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#ffffff",
+      "fadeDuration": 0
     },
     "ios": {
       "supportsTablet": true
@@ -21,14 +22,14 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.pramudakulathunga.HomeSphere"
+      "package": "com.pramudakulathunga.HomeSphereNew"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "132cc96b-21cc-4283-b1b0-7c35b687c652"
+        "projectId": "c8561fb5-81bc-4e4c-8e56-34cfc184e8f7"
       }
     }
   }
