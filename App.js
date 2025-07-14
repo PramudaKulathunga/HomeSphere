@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import 'react-native-gesture-handler';
 import React, { useEffect, useState } from 'react';
-import { View, Alert, Text, TouchableOpacity, StyleSheet, NativeModules, BackHandler } from 'react-native';
+import { View, Alert, Text, TouchableOpacity, StyleSheet, NativeModules, BackHandler, Keyboard, InteractionManager, Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -11,6 +11,7 @@ import NetInfo from '@react-native-community/netinfo';
 import { Ionicons } from '@expo/vector-icons';
 import { listenToAllPorts } from './src/Components/storage';
 import SplashScreen from './src/Components/SplashScreen';
+import * as NavigationBar from 'expo-navigation-bar';
 
 import OnboardingScreen from './src/screen/OnboardingScreen';
 import HomeScreen from './src/screen/HomeScreen';
@@ -140,6 +141,7 @@ const MainTabs = () => {
 const App = () => {
   const [isAppFirstLaunched, setIsAppFirstLaunch] = React.useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -148,7 +150,7 @@ const App = () => {
 
     return () => clearTimeout(timer);
   }, []);
-  
+
   useEffect(() => {
     const interval = setInterval(() => {
       listenToAllPorts();
@@ -171,6 +173,54 @@ const App = () => {
     }
     check()
   }, [])
+
+  //Bottom navigator hide
+  useEffect(() => {
+  const hideNavigationBar = async () => {
+    try {
+      await NavigationBar.setVisibilityAsync('hidden');
+      await NavigationBar.setBehaviorAsync('immersive');
+    } catch (error) {
+      console.warn('NavigationBar error:', error);
+    }
+  };
+
+  hideNavigationBar();
+
+  // Keyboard listeners
+  const keyboardDidShowListener = Keyboard.addListener(
+    'keyboardDidShow',
+    async () => {
+      if (Platform.OS === 'android') {
+        try {
+          // Keep navigation bar hidden when keyboard appears
+          await NavigationBar.setVisibilityAsync('hidden');
+        } catch (error) {
+          console.warn('Keyboard show error:', error);
+        }
+      }
+    }
+  );
+
+  const keyboardDidHideListener = Keyboard.addListener(
+    'keyboardDidHide',
+    async () => {
+      if (Platform.OS === 'android') {
+        try {
+          // Ensure navigation bar stays hidden after keyboard dismiss
+          await NavigationBar.setVisibilityAsync('hidden');
+        } catch (error) {
+          console.warn('Keyboard hide error:', error);
+        }
+      }
+    }
+  );
+
+  return () => {
+    keyboardDidShowListener.remove();
+    keyboardDidHideListener.remove();
+  };
+}, []);
 
   {/*Wifi connection checking*/ }
   useEffect(() => {
@@ -214,7 +264,7 @@ const App = () => {
 const styles = StyleSheet.create({
   tabBarContainer: {
     flexDirection: 'row',
-    paddingBottom: 40,
+    paddingBottom: 20,
     paddingTop: 10,
     borderTopWidth: 1,
     borderTopColor: '#f0f0f0',
