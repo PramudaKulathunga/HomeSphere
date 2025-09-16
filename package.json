@@ -25,6 +25,7 @@
     "react-freeze": "^1.0.4",
     "react-native": "0.79.4",
     "react-native-circular-progress": "^1.4.1",
+    "react-native-dotenv": "^3.4.11",
     "react-native-dropdown-picker": "^5.4.6",
     "react-native-gesture-handler": "^2.26.0",
     "react-native-safe-area-context": "^5.5.0",

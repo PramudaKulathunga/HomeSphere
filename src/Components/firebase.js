@@ -1,15 +1,25 @@
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, onValue, update } from "firebase/database";
+import {
+  firebase_apiKey,
+  firebase_authDomain,
+  firebase_databaseURL,
+  firebase_projectId,
+  firebase_storageBucket,
+  firebase_messagingSenderId,
+  firebase_appId,
+  firebase_measurementId
+} from "@env";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDRnlQOxkzD2jV9NdGxHNV0uBPTmYyQq4I",
-  authDomain: "homespherenew.firebaseapp.com",
-  databaseURL:"https://homespherenew-default-rtdb.asia-southeast1.firebasedatabase.app/",
-  projectId: "homespherenew",
-  storageBucket: "homespherenew.appspot.com",
-  messagingSenderId: "852033732308",
-  appId: "1:852033732308:web:d5d0cc1f3cc1cbbc988541",
-  measurementId: "G-3JCXHRSTT9"
+  apiKey: firebase_apiKey,
+  authDomain: firebase_authDomain,
+  databaseURL: firebase_databaseURL,
+  projectId: firebase_projectId,
+  storageBucket: firebase_storageBucket,
+  messagingSenderId: firebase_messagingSenderId,
+  appId: firebase_appId,
+  measurementId: firebase_measurementId
 };
 
 const app = initializeApp(firebaseConfig);

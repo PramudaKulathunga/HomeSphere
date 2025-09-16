@@ -18,6 +18,16 @@
       "autoIncrement": true,
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "firebase_apiKey": "AIzaSyDRnlQOxkzD2jV9NdGxHNV0uBPTmYyQq4I",
+        "firebase_authDomain": "homespherenew.firebaseapp.com",
+        "firebase_databaseURL": "https://homespherenew-default-rtdb.asia-southeast1.firebasedatabase.app",
+        "firebase_projectId": "homespherenew",
+        "firebase_storageBucket": "homespherenew.appspot.com",
+        "firebase_messagingSenderId": "852033732308",
+        "firebase_appId": "1:852033732308:web:d5d0cc1f3cc1cbbc988541",
+        "firebase_measurementId": "G-3JCXHRSTT9"
       }
     }
   },
